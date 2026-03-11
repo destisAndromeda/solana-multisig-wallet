@@ -19,4 +19,8 @@ pub mod multisig_wallet {
     pub fn proposal_create(ctx: Context<ProposalCreate>, args: ProposalCreateArgs) -> Result<()> {
         ProposalCreate::proposal_create(ctx, args)
     }
+
+    pub fn approve_proposal(ctx: Context<ProposalVote>, args: ProposalVoteArgs) -> Result<()> {
+        ProposalVote::approve(ctx, args)
+    }
 }
