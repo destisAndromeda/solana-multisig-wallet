@@ -25,7 +25,7 @@ impl Proposal {
         8  + // anchor account descriminator
         32 + // multisig
         8  + // transaction_index
-        8  + // status
+        9  + // status
         1  + // bump
         (4 + (members_len * 32)) + // approved  
         (4 + (members_len * 32)) + // rejected

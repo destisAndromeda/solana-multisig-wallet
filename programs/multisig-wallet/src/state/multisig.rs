@@ -25,8 +25,9 @@ impl Multisig {
         2  + // threshold
         4  + // time_lock
         8  + // transaction_index
+        4  + // vector length
         1  + // bump
-        members_length * Member::INIT_SPACE
+        (members_length * Member::INIT_SPACE)
     }
 
     /// Return member index if the pubkey is a member of the multisig.
