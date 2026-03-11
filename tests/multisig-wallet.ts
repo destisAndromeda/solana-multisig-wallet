@@ -143,4 +143,21 @@ describe("multisig-wallet", () => {
     assert.strictEqual(proposalState.rejected.length, 1);
     assert.strictEqual(proposalState.rejected[0].toBase58(), owner2.publicKey.toBase58());
   });
+  it("5. Cancels a proposal", async () => {
+    await program.methods
+      .cancelProposal({
+        memo: null,
+      })
+      .accountsStrict({
+        multisig: multisigPda,
+        member: owner3.publicKey,
+        proposal: proposalPda,
+      })
+      .signers([owner3])
+      .rpc();
+
+    const proposalState = await program.account.proposal.fetch(proposalPda);
+    assert.strictEqual(proposalState.cancelled.length, 1);
+    assert.strictEqual(proposalState.cancelled[0].toBase58(), owner3.publicKey.toBase58());
+  });
 });
