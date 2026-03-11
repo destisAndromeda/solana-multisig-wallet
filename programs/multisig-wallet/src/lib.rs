@@ -15,4 +15,8 @@ pub mod multisig_wallet {
     pub fn multisig_create(ctx: Context<MultisigCreate>, args: MultisigCreateArgs) -> Result<()> {
         MultisigCreate::multisig_create(ctx, args)
     }
+
+    pub fn proposal_create(ctx: Context<ProposalCreate>, args: ProposalCreateArgs) -> Result<()> {
+        ProposalCreate::proposal_create(ctx, args)
+    }
 }
