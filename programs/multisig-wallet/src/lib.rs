@@ -31,4 +31,8 @@ pub mod multisig_wallet {
     pub fn cancel_proposal(ctx: Context<ProposalVote>, args: ProposalVoteArgs) -> Result<()> {
         ProposalVote::cancel(ctx, args)
     }
+
+    pub fn proposal_activate(ctx: Context<ProposalActivate>) -> Result<()> {
+        ProposalActivate::proposal_activate(ctx)
+    }
 }
