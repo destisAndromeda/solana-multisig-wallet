@@ -44,6 +44,18 @@ describe("multisig-wallet", () => {
     program.programId
   );
 
+  const transactionIndex2 = new anchor.BN(2);
+  const [proposalPda2] = PublicKey.findProgramAddressSync(
+    [
+      Buffer.from("multisig"), 
+      multisigPda.toBuffer(), 
+      Buffer.from("transaction"), 
+      transactionIndex2.toArrayLike(Buffer, "le", 8), 
+      Buffer.from("proposal")
+    ],
+    program.programId
+  );
+
   before(async () => {
     // Airdrop SOL for test execution
     const signatures = await Promise.all([
@@ -159,5 +171,39 @@ describe("multisig-wallet", () => {
     const proposalState = await program.account.proposal.fetch(proposalPda);
     assert.strictEqual(proposalState.cancelled.length, 1);
     assert.strictEqual(proposalState.cancelled[0].toBase58(), owner3.publicKey.toBase58());
+  });
+
+  it("6. Creates a draft proposal", async () => {
+    await program.methods
+      .proposalCreate({
+        transactionIndex: transactionIndex2,
+        draft: true,
+      })
+      .accountsStrict({
+        multisig: multisigPda,
+        proposal: proposalPda2,
+        rentPayer: provider.wallet.publicKey,
+        systemProgram: SystemProgram.programId,
+      })
+      .rpc();
+
+    const proposalState = await program.account.proposal.fetch(proposalPda2);
+    assert.isTrue(proposalState.transactionIndex.eq(transactionIndex2));
+    assert.ok(proposalState.status.draft);
+  });
+
+  it("7. Activates a draft proposal", async () => {
+    await program.methods
+      .proposalActivate()
+      .accountsStrict({
+        multisig: multisigPda,
+        proposal: proposalPda2,
+        createKey: createKey.publicKey,
+      })
+      .signers([createKey])
+      .rpc();
+
+    const proposalState = await program.account.proposal.fetch(proposalPda2);
+    assert.ok(proposalState.status.active);
   });
 });
