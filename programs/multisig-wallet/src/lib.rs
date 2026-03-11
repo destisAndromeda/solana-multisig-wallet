@@ -23,8 +23,4 @@ pub mod multisig_wallet {
     pub fn approve_proposal(ctx: Context<ProposalVote>, args: ProposalVoteArgs) -> Result<()> {
         ProposalVote::approve(ctx, args)
     }
-
-    pub fn reject_proposal(ctx: Context<ProposalVote>, args ProposalVoteArgs) -> Result<()> {
-        ProposalVote::reject_proposal(ctx, args)
-    }
 }
