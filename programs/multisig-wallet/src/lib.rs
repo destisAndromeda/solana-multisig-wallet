@@ -12,4 +12,7 @@ declare_id!("B7snjmiBzGURpwn9ZLzQFaRCjhHJBpbnLBtLzL9oqA8G");
 pub mod multisig_wallet {
     use super::*;
 
+    pub fn multisig_create(ctx: Context<MultisigCreate>, args: MultisigCreateArgs) -> Result<()> {
+        MultisigCreate::multisig_create(ctx, args)
+    }
 }

@@ -36,7 +36,7 @@ pub struct MultisigCreate<'info> {
 }
 
 impl<'info> MultisigCreate<'info> {
-    pub fn create_multisig(ctx: Context<Self>, args: MultisigCreateArgs) -> Result<()> {
+    pub fn multisig_create(ctx: Context<Self>, args: MultisigCreateArgs) -> Result<()> {
         let mut members = args.members;
         members.sort_by_key(|m| m.key);
 
