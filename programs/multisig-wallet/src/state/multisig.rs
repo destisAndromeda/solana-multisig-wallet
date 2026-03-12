@@ -66,6 +66,13 @@ impl Multisig {
             .checked_add(1)
             .unwrap()
     }
+
+    pub fn member_has_permission(&self, member_pubkey: Pubkey, permission: Permission) -> bool {
+        match self.is_member(member_pubkey) {
+            Some(idx) => self.members[idx].permission.has(permission),
+            _ => false,
+        }
+    }
 }
 
 #[derive(

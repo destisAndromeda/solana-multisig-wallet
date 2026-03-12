@@ -32,6 +32,8 @@ pub struct ProposalCreate<'info> {
     )]
     pub proposal: Account<'info, Proposal>,
 
+    pub signer: Signer<'info>,
+
     #[account(mut)]
     pub rent_payer: Signer<'info>,
 
