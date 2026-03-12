@@ -8,6 +8,9 @@ pub enum MultisigError {
     #[msg("Invalid Threshold")]
     InvalidThreshold,
 
+    #[msg("Invalid Transaction Index")]
+    InvalidTransactionIndex,
+
     #[msg("Not An Owner")]
     NotAnOwner,
 
@@ -26,6 +29,12 @@ pub enum MultisigError {
     #[msg("Not Enough Signers")]
     NotEnoughSigners,
 
-    #[msg("Not a member")]
+    #[msg("Not A Member")]
     NotAMember,
+
+    #[msg("Stale Proposal")]
+    StaleProposal,
+
+    #[msg("Unauthorized")]
+    Unauthorized,
 }

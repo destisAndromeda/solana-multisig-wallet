@@ -12,6 +12,9 @@ pub struct Multisig {
     pub time_lock: u32,
     /// Last transaction index. 0 means no transactions have been created.
     pub transaction_index: u64,
+
+    pub stale_transaction_index: u64,
+
     /// Members of the multisig.
     pub members: Vec<Member>,
     /// Bump for the multisig PDA seed.
@@ -25,6 +28,7 @@ impl Multisig {
         2  + // threshold
         4  + // time_lock
         8  + // transaction_index
+        8  + // stale_transaction_index
         4  + // vector length
         1  + // bump
         (members_length * Member::INIT_SPACE)

@@ -1,6 +1,8 @@
 use anchor_lang::prelude::*;
 
 use crate::state::*;
+use crate::errors::*;
+
 
 #[derive(AnchorSerialize, AnchorDeserialize)]
 pub struct ProposalCreateArgs {
@@ -12,6 +14,7 @@ pub struct ProposalCreateArgs {
 #[instruction(args: ProposalCreateArgs)]
 pub struct ProposalCreate<'info> {
     #[account(
+        mut,
         seeds = [SEED_PREFIX, SEED_MULTISIG, multisig.create_key.as_ref()],
         bump  = multisig.bump,
     )]
@@ -32,7 +35,7 @@ pub struct ProposalCreate<'info> {
     )]
     pub proposal: Account<'info, Proposal>,
 
-    pub signer: Signer<'info>,
+    pub creator: Signer<'info>,
 
     #[account(mut)]
     pub rent_payer: Signer<'info>,
@@ -41,14 +44,51 @@ pub struct ProposalCreate<'info> {
 }
 
 impl<'info> ProposalCreate<'info> {
+    fn validate(&self, args: &ProposalCreateArgs) -> Result<()> {
+        let Self {
+            multisig, creator, ..
+        }  = self;
+        let creator_key = creator.key();
+        
+        require!(
+            args.transaction_index ==
+            multisig.transaction_index,
+            MultisigError::InvalidTransactionIndex,
+        );
+
+        require!(
+            args.transaction_index >
+            multisig.stale_transaction_index,
+            MultisigError::StaleProposal,
+        );
+
+        require!(
+            self.multisig.is_member(self.creator.key()).is_some(),
+            MultisigError::NotAMember,
+        );
+
+        require!(
+            self.multisig
+                .member_has_permission(self.creator.key(), Permission::Vote)
+                || self
+                    .multisig
+                    .member_has_permission(self.creator.key(), Permission::Initiate),
+            MultisigError::Unauthorized,
+        );
+
+        Ok(())
+    }
+
+    #[access_control(ctx.accounts.validate(&args))]
     pub fn proposal_create(ctx: Context<Self>, args: ProposalCreateArgs) -> Result<()> {
         let mut proposal = &mut ctx.accounts.proposal;
         
-        let multisig = &ctx.accounts.multisig;
+        let multisig = &mut ctx.accounts.multisig;
 
-        proposal.multisig          = multisig.create_key.key();
-        proposal.transaction_index = args.transaction_index;
-        proposal.status            = if args.draft {
+        proposal.multisig                = multisig.create_key.key();
+        proposal.transaction_index       = args.transaction_index;
+        proposal.stale_transaction_index = multisig.stale_transaction_index;
+        proposal.status                  = if args.draft {
             ProposalStatus::Draft {
                 timestamp: Clock::get()?.unix_timestamp,
             }
@@ -62,6 +102,8 @@ impl<'info> ProposalCreate<'info> {
         proposal.approved  = vec![];
         proposal.rejected  = vec![];
         proposal.cancelled = vec![];
+
+        multisig.transaction_index += 1;
 
         Ok(())
     }

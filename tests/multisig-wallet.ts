@@ -110,8 +110,10 @@ describe("multisig-wallet", () => {
         multisig: multisigPda,
         proposal: proposalPda,
         rentPayer: provider.wallet.publicKey,
+        creator: owner1.publicKey,
         systemProgram: SystemProgram.programId,
       })
+      .signers([owner1])
       .rpc();
 
     const proposalState = await program.account.proposal.fetch(proposalPda);
@@ -183,8 +185,10 @@ describe("multisig-wallet", () => {
         multisig: multisigPda,
         proposal: proposalPda2,
         rentPayer: provider.wallet.publicKey,
+        creator: owner1.publicKey,
         systemProgram: SystemProgram.programId,
       })
+      .signers([owner1])
       .rpc();
 
     const proposalState = await program.account.proposal.fetch(proposalPda2);

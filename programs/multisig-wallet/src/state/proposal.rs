@@ -9,6 +9,8 @@ pub struct Proposal {
 
     pub transaction_index: u64,
 
+    pub stale_transaction_index: u64,
+
     pub status: ProposalStatus,
 
     pub approved:  Vec<Pubkey>,
@@ -25,6 +27,7 @@ impl Proposal {
         8  + // anchor account descriminator
         32 + // multisig
         8  + // transaction_index
+        8  + // stale_transaction_index
         9  + // status
         1  + // bump
         (4 + (members_len * 32)) + // approved  

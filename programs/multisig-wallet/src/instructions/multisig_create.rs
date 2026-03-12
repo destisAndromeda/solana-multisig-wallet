@@ -44,7 +44,8 @@ impl<'info> MultisigCreate<'info> {
         multisig.create_key = ctx.accounts.create_key.key();
         multisig.threshold = args.threshold;
         multisig.time_lock = args.time_lock;
-        multisig.transaction_index = 0;
+        multisig.transaction_index = 1;
+        multisig.stale_transaction_index = 0;
         multisig.members = members;
         multisig.bump = ctx.bumps.multisig;
 
